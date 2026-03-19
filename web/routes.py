@@ -1,6 +1,8 @@
 from flask import Blueprint, render_template, request, redirect, url_for 
 from core.domain.product.product import Product
-def create_product_blueprint(uc_create, uc_list, uc_delete_produto, uc_edit_product):
+from core.domain.sale.sale import Sale 
+from datetime import datetime
+def create_product_blueprint(uc_create, uc_list, uc_delete_produto, uc_edit_product, uc_create_sale, uc_list_sale_item, uc_remove_sale_item, uc_list_metricas):
     bp = Blueprint('products', __name__)
 
     @bp.route('/')
@@ -56,13 +58,34 @@ def create_product_blueprint(uc_create, uc_list, uc_delete_produto, uc_edit_prod
 
         return render_template('edit-produto.html', produto=produto)
     @bp.route('/metricas')
-    def page_financeiro():
-        return render_template('metricas.html')
+    def page_metricas():
+        monthly_profits = uc_list_metricas.execute()
+        return render_template('metricas.html', monthly_profits=monthly_profits)
+        
 
-    @bp.route('/vendas')
+    @bp.route('/vendas', methods=['GET','POST'])
     def vendas_page():
-        return render_template('vendas.html')
+        if request.method == 'POST':
+            sale_date = request.form.get('data')
+            if not sale_date:
+                sale_date = datetime.now().strftime("%Y-%m-%d")
+            sale = Sale(
+                date=sale_date,
+                product_id=int(request.form.get('id')),
+                quantity=int(request.form.get('quantidade'))
+            )
+            uc_create_sale.execute(sale)
+            redirect(url_for('products.page_metricas'))
+        produtos = uc_list.execute() 
+        list_sale_items = uc_list_sale_item.execute()
+        return render_template('vendas.html', list_sale_items=list_sale_items, produtos=produtos)
     
+    @bp.route('/vendas/excluir/<int:sale_id>', methods=['GET'])
+    def remove_sale_item(sale_id):
+        uc_remove_sale_item.execute(sale_id)
+
+        return redirect(url_for('products.vendas_page'))
+
     return bp
 
     

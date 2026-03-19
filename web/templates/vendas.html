@@ -2,6 +2,52 @@
 
 {% block content %}
 
+<h1>Gerenciamento de Vendas</h1>
+
+    <section class="form-section">
+        <form action="/vendas" method="POST">
+            <input type="date" name="data" placeholder="data" required>
+            <input type="number" name="id" placeholder="ID do Produto" step="1" required>
+            <input type="number" name="quantidade" placeholder="quantidade" step="0.01" required>
+            <button type="submit" class="btn-save">Registar Venda</button>
+        </form>
+    </section>
+
+    <hr>
+
+    <table class="product-table">
+        <thead>
+            <tr>
+                <th>ID de Venda</th>
+                <th>Data de Venda</th>
+                <th>Nome</th>
+                <th>Preço de Venda</th>
+                <th>Quantidade</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in list_sale_items %}
+                
+            <tr>
+                <td>{{ item.sale_id }}</td>
+                <td>{{ item.date }}</td>
+                <td>{{ item.product_name }}</td>
+                <td>R$ {{ item.sale_price }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>
+                    <a href="/vendas/excluir/{{ item['sale_id'] }}" class="btn-delete">Excluir</a>
+                    <a href="/vendas/editar/{{ item['id'] }}" class="btn-edit">Editar</a>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6">Nenhum produto encontrado no banco de dados.</td>
+            </tr>
+                
+            {% endfor %}
+        </tbody>
+    </table>
 
 
 {% endblock %}

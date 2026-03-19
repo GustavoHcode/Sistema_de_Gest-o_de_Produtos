@@ -1,7 +1,27 @@
 {% extends 'index.html' %}
 
 {% block content %}
-
+<h2>Lucro Mensal</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Mês</th>
+            <th>Lucro</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for m in monthly_profits %}
+        <tr>
+            <td>{{ m.month }}</td>
+            <td>R$ {{ "%.2f"|format(m.profit) }}</td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="2">Nenhum registro encontrado.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 
 
 {% endblock %}

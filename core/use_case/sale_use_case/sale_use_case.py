@@ -1,4 +1,4 @@
-from domain.sale.sale_interface import InterfaceSale
+from core.domain.sale.sale_interface import InterfaceSale
 
 class CreateSale:
     def __init__(self, repository: InterfaceSale):
